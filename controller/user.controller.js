@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createActivationToken = exports.registrationUser = void 0;
+exports.activateUser = exports.createActivationToken = exports.registrationUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var user_model_1 = require("../models/user.model");
@@ -107,3 +107,40 @@ var createActivationToken = function (user) {
     return { token: token, activationCode: activationCode };
 };
 exports.createActivationToken = createActivationToken;
+exports.activateUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, activation_token, activation_code, newUser, _b, name_2, email, password, existsUser, user, error_3;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 3, , 4]);
+                _a = req.body, activation_token = _a.activation_token, activation_code = _a.activation_code;
+                newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
+                if (newUser.activationCode !== activation_code) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Invalid activation code", 400))];
+                }
+                _b = newUser.user, name_2 = _b.name, email = _b.email, password = _b.password;
+                return [4 /*yield*/, user_model_1.default.findOne({ email: email })];
+            case 1:
+                existsUser = _c.sent();
+                if (existsUser) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Email already exists", 400))];
+                }
+                return [4 /*yield*/, user_model_1.default.create({
+                        name: name_2,
+                        email: email,
+                        password: password
+                    })];
+            case 2:
+                user = _c.sent();
+                res.status(201).json({
+                    success: true,
+                    message: "Account activated successfully"
+                });
+                return [3 /*break*/, 4];
+            case 3:
+                error_3 = _c.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_3.message, 400))];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
