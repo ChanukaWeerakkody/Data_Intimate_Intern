@@ -17,8 +17,8 @@ export interface IUser extends Document{
     isVerified:boolean;
     courses:Array<{courseId:string}>;
     comparePassword(password:string):Promise<boolean>;
-    signAccessToken():string;
-    signRefreshToken():string;
+    signAccessToken: () => string;
+    signRefreshToken: () =>string;
 }
 
 //use validation
