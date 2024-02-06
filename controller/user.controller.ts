@@ -10,6 +10,7 @@ import {Secret} from "jsonwebtoken";
 import * as ejs from "ejs";
 import sendMail from "../util/sendMail";
 import {sendToken} from "../util/jwt";
+import {redis} from "../util/redis";
 
 //Register a new user
 interface IRegisterBody{
@@ -154,7 +155,21 @@ export const loginUser = CatchAsyncError(async (req:Request,res:Response,next:Ne
     }
 })
 
+//Logout user
+export const logoutUser = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
+    try{
+        res.cookie("access_token","",{maxAge:1});
+        res.cookie("refresh_token","",{maxAge:1});
 
+        res.status(200).json({
+            success:true,
+            message:"Logged out successfully"
+        })
+
+    }catch (error:any){
+        return next(new ErrorHandler(error.message,500));
+    }
+})
 
 
 

@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registrationUser = void 0;
+exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registrationUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var user_model_1 = require("../models/user.model");
@@ -174,5 +174,22 @@ exports.loginUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, 
                 return [2 /*return*/, next(new ErrorHandler_1.default(error_4.message, 400))];
             case 4: return [2 /*return*/];
         }
+    });
+}); });
+//Logout user
+exports.logoutUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        try {
+            res.cookie("access_token", "", { maxAge: 1 });
+            res.cookie("refresh_token", "", { maxAge: 1 });
+            res.status(200).json({
+                success: true,
+                message: "Logged out successfully"
+            });
+        }
+        catch (error) {
+            return [2 /*return*/, next(new ErrorHandler_1.default(error.message, 500))];
+        }
+        return [2 /*return*/];
     });
 }); });
