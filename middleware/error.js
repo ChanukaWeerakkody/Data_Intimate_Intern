@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ErrorMiddleware = void 0;
 var ErrorHandler_1 = require("../util/ErrorHandler");
 /*
 export const ErrorMiddleware = (err:any, req:any, res:any, next:any) =>{
@@ -37,7 +38,7 @@ export const ErrorMiddleware = (err:any, req:any, res:any, next:any) =>{
 */
 /*
 }*/
-module.exports = function (err, req, res, next) {
+var ErrorMiddleware = function (err, req, res, next) {
     err.statusCode = err.statusCode || 500;
     err.message = err.message || "Internal server error";
     //wrong mongo id error
@@ -65,3 +66,4 @@ module.exports = function (err, req, res, next) {
         message: err.message
     });
 };
+exports.ErrorMiddleware = ErrorMiddleware;
