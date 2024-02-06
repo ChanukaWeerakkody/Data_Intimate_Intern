@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registrationUser = void 0;
+exports.getAllUsers = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registrationUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var user_model_1 = require("../models/user.model");
@@ -46,6 +46,7 @@ var jwt = require("jsonwebtoken");
 var ejs = require("ejs");
 var sendMail_1 = require("../util/sendMail");
 var jwt_1 = require("../util/jwt");
+var user_service_1 = require("../services/user.service");
 //Register user
 exports.registrationUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, name_1, email, password, isEmailExists, user, activationToken, activationCode, data, html, error_1, error_2;
@@ -186,6 +187,18 @@ exports.logoutUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res,
                 success: true,
                 message: "Logged out successfully"
             });
+        }
+        catch (error) {
+            return [2 /*return*/, next(new ErrorHandler_1.default(error.message, 500))];
+        }
+        return [2 /*return*/];
+    });
+}); });
+//get all users
+exports.getAllUsers = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        try {
+            (0, user_service_1.getAllUserService)(res);
         }
         catch (error) {
             return [2 /*return*/, next(new ErrorHandler_1.default(error.message, 500))];

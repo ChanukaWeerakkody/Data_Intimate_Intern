@@ -7,4 +7,5 @@ userRouter.post("/registration", user_controller_1.registrationUser);
 userRouter.post("/activate-user", user_controller_1.activateUser);
 userRouter.post("/login", user_controller_1.loginUser);
 userRouter.post("/logout", user_controller_1.logoutUser);
+userRouter.get("/getAll-users", user_controller_1.getAllUsers);
 exports.default = userRouter;

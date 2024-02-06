@@ -10,7 +10,9 @@ import {Secret} from "jsonwebtoken";
 import * as ejs from "ejs";
 import sendMail from "../util/sendMail";
 import {sendToken} from "../util/jwt";
-import {redis} from "../util/redis";
+import {getAllUserService} from "../services/user.service";
+
+
 
 //Register a new user
 interface IRegisterBody{
@@ -171,6 +173,14 @@ export const logoutUser = CatchAsyncError(async(req:Request,res:Response,next:Ne
     }
 })
 
+//get all users
+export const getAllUsers = CatchAsyncError(async(req:any,res:Response,next:NextFunction)=>{
+    try {
+        getAllUserService(res);
+    }catch (error:any){
+        return next(new ErrorHandler(error.message,500));
+    }
+});
 
 
 
