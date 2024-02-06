@@ -189,9 +189,6 @@ export const deleteUser = CatchAsyncError(async(req:Request,res:Response,next:Ne
         const id = req.params.id;
         console.log(id);
         const user = await userModel.findById(id);
-        /*if(!user){
-            return next(new ErrorHandler("User not found",404));
-        }*/
         await user.deleteOne({id});
        // await redis.del(id);
         res.status(200).json({
@@ -203,6 +200,68 @@ export const deleteUser = CatchAsyncError(async(req:Request,res:Response,next:Ne
     }
 })
 
+interface IUpdateUserInfo{
+    name?:string;
+    email?:string;
+}
+
+export const updateUserInfo = CatchAsyncError(async(req:any,res:Response,next:NextFunction)=>{
+    try {
+        const userId = req.user?._id;
+        const {name,email} = req.body as IUpdateUserInfo;
+        const user = await userModel.findById(userId);
+
+        if(email && user){
+            const isEmailExist = await userModel.findOne({email});
+            if(isEmailExist){
+                return next(new ErrorHandler("Email already exists",400));
+            }
+            user.email = email;
+        }
+        if(name && user){
+            user.name = name;
+        }
+        await user?.save();
+        await redis.set(userId,JSON.stringify(user));
+
+        res.status(201).json({
+            success:true,
+            user
+        })
+    }catch (error:any){
+        return next(new ErrorHandler(error.message,500));
+    }
+})
+
+export const updateUser = CatchAsyncError(async (req:Request,res:Response,next:NextFunction)=>{
+    try{
+        const data =req.body;
+        //const thumbnail = data.thumbnail;
+
+        /*if(thumbnail){
+            await cloudinary.v2.uploader.destroy(data.thumbnail.public_id);
+            const myCloud = await cloudinary.v2.uploader.upload(thumbnail,{
+                folder:"courses"
+            })
+            data.thumbnail = {
+                public_id:myCloud.public_id,
+                url:myCloud.secure_url
+            }
+        }*/
+
+        const courseId=req.params.id;
+        const course = await userModel.findByIdAndUpdate(courseId,{
+                $set:data},
+            {new:true
+            })
+        res.status(200).json({
+            success:true,
+            course
+        })
+    }catch (err:any){
+        return next(new ErrorHandler(err.message,500));
+    }
+})
 
 
 

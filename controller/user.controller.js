@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.getAllUsers = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registrationUser = void 0;
+exports.updateUser = exports.updateUserInfo = exports.deleteUser = exports.getAllUsers = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registrationUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var user_model_1 = require("../models/user.model");
@@ -47,6 +47,7 @@ var ejs = require("ejs");
 var sendMail_1 = require("../util/sendMail");
 var jwt_1 = require("../util/jwt");
 var user_service_1 = require("../services/user.service");
+var redis_1 = require("../util/redis");
 //Register user
 exports.registrationUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, name_1, email, password, isEmailExists, user, activationToken, activationCode, data, html, error_1, error_2;
@@ -218,14 +219,8 @@ exports.deleteUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res,
                 return [4 /*yield*/, user_model_1.default.findById(id)];
             case 1:
                 user = _a.sent();
-                /*if(!user){
-                    return next(new ErrorHandler("User not found",404));
-                }*/
                 return [4 /*yield*/, user.deleteOne({ id: id })];
             case 2:
-                /*if(!user){
-                    return next(new ErrorHandler("User not found",404));
-                }*/
                 _a.sent();
                 // await redis.del(id);
                 res.status(200).json({
@@ -237,6 +232,75 @@ exports.deleteUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res,
                 error_5 = _a.sent();
                 return [2 /*return*/, next(new ErrorHandler_1.default(error_5.message, 500))];
             case 4: return [2 /*return*/];
+        }
+    });
+}); });
+exports.updateUserInfo = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var userId, _a, name_3, email, user, isEmailExist, error_6;
+    var _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 6, , 7]);
+                userId = (_b = req.user) === null || _b === void 0 ? void 0 : _b._id;
+                _a = req.body, name_3 = _a.name, email = _a.email;
+                return [4 /*yield*/, user_model_1.default.findById(userId)];
+            case 1:
+                user = _c.sent();
+                if (!(email && user)) return [3 /*break*/, 3];
+                return [4 /*yield*/, user_model_1.default.findOne({ email: email })];
+            case 2:
+                isEmailExist = _c.sent();
+                if (isEmailExist) {
+                    return [2 /*return*/, next(new ErrorHandler_1.default("Email already exists", 400))];
+                }
+                user.email = email;
+                _c.label = 3;
+            case 3:
+                if (name_3 && user) {
+                    user.name = name_3;
+                }
+                return [4 /*yield*/, (user === null || user === void 0 ? void 0 : user.save())];
+            case 4:
+                _c.sent();
+                return [4 /*yield*/, redis_1.redis.set(userId, JSON.stringify(user))];
+            case 5:
+                _c.sent();
+                res.status(201).json({
+                    success: true,
+                    user: user
+                });
+                return [3 /*break*/, 7];
+            case 6:
+                error_6 = _c.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_6.message, 500))];
+            case 7: return [2 /*return*/];
+        }
+    });
+}); });
+exports.updateUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var data, courseId, course, err_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                data = req.body;
+                courseId = req.params.id;
+                return [4 /*yield*/, user_model_1.default.findByIdAndUpdate(courseId, {
+                        $set: data
+                    }, { new: true
+                    })];
+            case 1:
+                course = _a.sent();
+                res.status(200).json({
+                    success: true,
+                    course: course
+                });
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _a.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(err_1.message, 500))];
+            case 3: return [2 /*return*/];
         }
     });
 }); });

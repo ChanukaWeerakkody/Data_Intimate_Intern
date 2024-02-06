@@ -9,4 +9,5 @@ userRouter.post("/login", user_controller_1.loginUser);
 userRouter.post("/logout", user_controller_1.logoutUser);
 userRouter.get("/getAll-users", user_controller_1.getAllUsers);
 userRouter.delete("/delete-user/:id", user_controller_1.deleteUser);
+userRouter.put("/updateUser/:id", user_controller_1.updateUser);
 exports.default = userRouter;
