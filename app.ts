@@ -6,6 +6,7 @@ import * as express from "express";
 export const app = express();
 import * as cors from "cors";
 import {ErrorMiddleware}  from "./middleware/error";
+import userRouter from "./route/user.route";
 
 //body parser
 app.use(express.json({limit: "50mb"}));
@@ -20,7 +21,7 @@ app.use(cors({
 }));
 
 //Routes
-//app.use('/api/v1', userRouter);
+app.use('/api/v1', userRouter);
 
 
 //testing api
