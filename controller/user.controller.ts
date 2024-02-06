@@ -11,6 +11,7 @@ import * as ejs from "ejs";
 import sendMail from "../util/sendMail";
 import {sendToken} from "../util/jwt";
 import {getAllUserService} from "../services/user.service";
+import {redis} from "../util/redis";
 
 
 
@@ -181,6 +182,26 @@ export const getAllUsers = CatchAsyncError(async(req:any,res:Response,next:NextF
         return next(new ErrorHandler(error.message,500));
     }
 });
+
+//delete user
+export const deleteUser = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
+    try {
+        const id = req.params.id;
+        console.log(id);
+        const user = await userModel.findById(id);
+        /*if(!user){
+            return next(new ErrorHandler("User not found",404));
+        }*/
+        await user.deleteOne({id});
+       // await redis.del(id);
+        res.status(200).json({
+            success:true,
+            message:"User deleted successfully",
+        })
+    }catch (error:any){
+        return next(new ErrorHandler(error.message,500));
+    }
+})
 
 
 

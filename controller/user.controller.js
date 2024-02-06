@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllUsers = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registrationUser = void 0;
+exports.deleteUser = exports.getAllUsers = exports.logoutUser = exports.loginUser = exports.activateUser = exports.createActivationToken = exports.registrationUser = void 0;
 var path = require("path");
 require('dotenv').config();
 var user_model_1 = require("../models/user.model");
@@ -204,5 +204,39 @@ exports.getAllUsers = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res
             return [2 /*return*/, next(new ErrorHandler_1.default(error.message, 500))];
         }
         return [2 /*return*/];
+    });
+}); });
+//delete user
+exports.deleteUser = (0, catchAsyncErrors_1.CatchAsyncError)(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, user, error_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                id = req.params.id;
+                console.log(id);
+                return [4 /*yield*/, user_model_1.default.findById(id)];
+            case 1:
+                user = _a.sent();
+                /*if(!user){
+                    return next(new ErrorHandler("User not found",404));
+                }*/
+                return [4 /*yield*/, user.deleteOne({ id: id })];
+            case 2:
+                /*if(!user){
+                    return next(new ErrorHandler("User not found",404));
+                }*/
+                _a.sent();
+                // await redis.del(id);
+                res.status(200).json({
+                    success: true,
+                    message: "User deleted successfully",
+                });
+                return [3 /*break*/, 4];
+            case 3:
+                error_5 = _a.sent();
+                return [2 /*return*/, next(new ErrorHandler_1.default(error_5.message, 500))];
+            case 4: return [2 /*return*/];
+        }
     });
 }); });
